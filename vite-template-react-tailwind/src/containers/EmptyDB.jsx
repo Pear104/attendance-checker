@@ -10,8 +10,8 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
-import { useState } from "react";
 import { data } from "../utils/data";
+import { ToastContainer, toast } from "react-toastify";
 
 const EmptyDB = () => {
   const emptyDB = async () => {
@@ -62,16 +62,40 @@ const EmptyDB = () => {
     <div className="pt-12 pl-12">
       <button
         className={"border border-black mt-2 px-1 ml-2 hover:bg-red-500 "}
-        onClick={emptyDB}
+        onClick={() => {
+          toast.promise(emptyDB, {
+            loading: "Loading",
+            success: "Empty DB success",
+            error: "Error when fetching",
+          });
+        }}
       >
         Empty database
       </button>
       <button
         className={"border border-black mt-2 px-1 ml-2 hover:bg-red-500 "}
-        onClick={addTestDB}
+        onClick={() => {
+          toast.promise(addTestDB, {
+            loading: "Loading",
+            success: "Adding data success",
+            error: "Error when fetching",
+          });
+        }}
       >
         Add test database
       </button>
+      <ToastContainer
+        position="bottom-left"
+        autoClose={1500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };

@@ -165,7 +165,6 @@ const Update = () => {
             field={"email"}
             title={"Email: "}
           />
-          <br />
           <h1>
             Fingerprint: {updateInfo.fingerprintId}
             <button

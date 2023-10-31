@@ -239,6 +239,8 @@ const Checkin = ({ employee, month, year }) => {
 
 const Modal = ({ modal, setModal, employee, month, year }) => {
   let keys = Object.keys(employee);
+  keys.sort();
+  keys.reverse();
   return (
     <div className="w-full h-full absolute top-0 left-0 bg-black bg-opacity-25">
       <div className="bg-white rounded-3xl w-5/6 h-[500px] absolute left-1/2 -translate-x-1/2 top-20">
@@ -255,17 +257,36 @@ const Modal = ({ modal, setModal, employee, month, year }) => {
               style={{
                 backgroundImage: `url(${employee.image})`,
               }}
-              className="h-28 bg-no-repeat bg-cover bg-center aspect-[16/20]"
+              className="h-36 bg-no-repeat bg-cover bg-center aspect-[16/20]"
             ></div>
             <div className="inline-block">
+              <h1 className="inline-block pr-3">
+                <span className="font-bold">id: </span> {employee.id}
+              </h1>
+              <br />
+              <h1 className="inline-block pr-3">
+                <span className="font-bold">name: </span> {employee.name}
+              </h1>
+              <br />
+              <h1 className="inline-block pr-3">
+                <span className="font-bold">fingerprintId: </span>{" "}
+                {employee.fingerprintId}
+              </h1>
+              <br />
               {keys.map((field) => {
                 return (
+                  field != "id" &&
+                  field != "name" &&
+                  field != "fingerprintId" &&
                   field != "image" &&
                   field != "attendance" && (
-                    <h1 className="inline-block pr-3">
-                      <span className="font-bold">{field}: </span>{" "}
-                      {employee[field] || "null"}
-                    </h1>
+                    <>
+                      <h1 className="inline-block pr-3">
+                        <span className="font-bold">{field}: </span>{" "}
+                        {employee[field] || "null"}
+                      </h1>
+                      <br />
+                    </>
                   )
                 );
               })}

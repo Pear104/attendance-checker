@@ -41,7 +41,7 @@ const postGottenFingerprintId = async (req, res) => {
       isGotten: true,
     });
     console.log(
-      `A new employee has just enroll our company with fingerprintId ${fingerprintId}, HURAYYYYY`
+      `A new employee has just enroll our company with fingerprintId ${fingerprintId}, HURAY`
     );
     return res.status(200).json({ message: "Register successfully" });
   } catch (error) {

@@ -147,6 +147,7 @@ const Register = () => {
             setId(e.target.value);
           }}
           onBlur={() => {
+            fetchData();
             setErrorType(checkValidation());
           }}
           onFocus={() => {
@@ -201,7 +202,7 @@ const Register = () => {
         <button
           className={
             "border border-black mt-2 px-1 ml-2 hover:bg-red-500 " +
-            (gotten && validation && errorType == "SUCCESS"
+            (gotten && errorType == "SUCCESS" && name != ""
               ? ""
               : "cursor-not-allowed")
           }
@@ -217,7 +218,7 @@ const Register = () => {
               }
             }
           }}
-          disabled={!gotten}
+          disabled={!(gotten && errorType == "SUCCESS" && name != "")}
         >
           Add to database
         </button>
