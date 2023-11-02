@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../firebase";
 import { useState } from "react";
+import { CSVLink, CSVDownload } from "react-csv";
 import BarChart from "../components/BarChart.jsx";
 
 const convertHourStringToSecond = (time) => {
@@ -63,7 +64,7 @@ const Table = ({ employees, month, year, setModal, setModalContent }) => {
     });
     setModal(true);
   };
-
+  let excelData = [];
   const have30days = [4, 6, 9, 11];
   let days;
   if (month == 2) {
@@ -79,6 +80,12 @@ const Table = ({ employees, month, year, setModal, setModalContent }) => {
   let employeeLabel = [];
   let employeeData = [];
   for (let i = 0; i < employees.length; i++) {
+    let excelRow = {
+      stt: i + 1,
+      id: employees[i].id,
+      name: employees[i].name,
+    };
+    excelRow;
     let keys = Object.keys(employees[i].attendance || {});
     let totalMoney = 0;
     let workedHours = 0;
@@ -123,6 +130,12 @@ const Table = ({ employees, month, year, setModal, setModalContent }) => {
     totalMoney = Math.floor(workedHours / 3600) * 20000;
     moneyNeedToPayForEmp += totalMoney;
 
+    excelRow.workedDay = workedDay;
+    excelRow.notWorkedDay = days - workedDay;
+    excelRow.workedHours = workedHours;
+    excelRow.salary = totalMoney;
+    excelData.push(excelRow);
+
     empRows.push(
       <>
         <td className="border border-black px-2">{workedDay}</td>
@@ -136,12 +149,24 @@ const Table = ({ employees, month, year, setModal, setModalContent }) => {
       </>
     );
   }
+  console.log(excelData);
   return (
     <div className="grid grid-cols-12 pb-8">
       <div className="col-span-7">
         <h1 className="font-bold text-xl pb-2 text-red-600">
           Bảng chấm công tháng {month}, năm {year}
+          <CSVLink
+            data={excelData}
+            filename={`bangchamcong_${month}-${year}`}
+            className="bg-green-600 ml-4 text-white px-2 py-1 rounded font-bold text-base hover:bg-green-700"
+            // className="bg-green-600 mb-3 opacity-80 text-white px-4 py-2 rounded font-bold -z-10 hover:opacity-100 w-full h-full"
+          >
+            <i class="fa-solid fa-file-arrow-down mr-2"></i>
+            Export
+          </CSVLink>
         </h1>
+        {/* <button className="bg-green-600 mb-3 text-white px-4 py-2 rounded font-bold hover:bg-green-700"> */}
+        {/* </button> */}
         <table>
           <thead>
             <tr>
@@ -308,9 +333,10 @@ const Modal = ({ modal, setModal, employee, month, year }) => {
 };
 
 const Detail = () => {
-  const [employees, setEmployees] = useState([]);
   const [modal, setModal] = useState(false);
   const [modalContent, setModalContent] = useState({});
+  const [employees, setEmployees] = useState([]);
+  const [date, setDate] = useState("");
 
   const fetchData = async () => {
     const employeeData = (
@@ -323,11 +349,11 @@ const Detail = () => {
     fetchData();
   }, []);
 
-  const date = new Date().toLocaleString("en-GB", {
+  const dateNow = new Date().toLocaleString("en-GB", {
     timeZone: "Asia/Ho_Chi_Minh",
   });
-  let a = parseInt(date.slice(3, 5));
-  let b = parseInt(date.slice(6, 10));
+  let a = parseInt(dateNow.slice(3, 5));
+  let b = parseInt(dateNow.slice(6, 10));
   let c, d, e, f;
   if (a == 1) {
     c = 12;

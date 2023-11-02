@@ -55,6 +55,7 @@ const Table = ({ month, year }) => {
     }
     empRows.push(daywork);
   }
+
   return (
     <div className="pt-4 pl-12 pb-8">
       <h1 className="font-bold text-xl mb-1 text-red-600">
@@ -90,12 +91,79 @@ const Table = ({ month, year }) => {
   );
 };
 
+const InOutTable = ({ date, employees }) => {
+  let rows = [];
+  employees.forEach((emp, index) => {
+    if (emp.attendance[date]) {
+      let cols = [];
+      cols.push(<th className="border border-black px-2">{index + 1}</th>);
+      cols.push(<th className="border border-black px-2">{emp.id}</th>);
+      cols.push(<th className="border border-black px-2">{emp.name}</th>);
+
+      for (let i = 0; i < 16; i++) {
+        cols.push(
+          <td className="border border-black px-2">
+            {emp.attendance[date][i] || ""}
+          </td>
+        );
+      }
+      rows.push(<tr>{cols}</tr>);
+    }
+  });
+  return (
+    <div>
+      <table className="">
+        <thead>
+          <tr>
+            <th className="border border-black px-2">STT</th>
+            <th className="border border-black px-2">ID</th>
+            <th className="border border-black px-2">Name</th>
+            <th className="border border-black px-2">In 1</th>
+            <th className="border border-black px-2">Out 1</th>
+            <th className="border border-black px-2">In 2</th>
+            <th className="border border-black px-2">Out 2</th>
+            <th className="border border-black px-2">In 3</th>
+            <th className="border border-black px-2">Out 3</th>
+            <th className="border border-black px-2">In 4</th>
+            <th className="border border-black px-2">Out 4</th>
+            <th className="border border-black px-2">In 5</th>
+            <th className="border border-black px-2">Out 5</th>
+            <th className="border border-black px-2">In 6</th>
+            <th className="border border-black px-2">Out 6</th>
+            <th className="border border-black px-2">In 7</th>
+            <th className="border border-black px-2">Out 7</th>
+            <th className="border border-black px-2">In 8</th>
+            <th className="border border-black px-2">Out 8</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    </div>
+  );
+};
+
 const Attendance = () => {
-  const date = new Date().toLocaleString("en-GB", {
+  const [employees, setEmployees] = useState([]);
+  const [date, setDate] = useState("");
+
+  const fetchData = async () => {
+    const employeeData = (
+      await getDocs(query(collection(db, "employees"), orderBy("id")))
+    ).docs.map((doc) => {
+      return doc.data();
+    });
+    setEmployees(employeeData);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const dateNow = new Date().toLocaleString("en-GB", {
     timeZone: "Asia/Ho_Chi_Minh",
   });
-  let a = date.slice(3, 5);
-  let b = date.slice(6, 10);
+  let a = dateNow.slice(3, 5);
+  let b = dateNow.slice(6, 10);
   let c, d, e, f;
   if (a == "1") {
     c = "12";
@@ -117,7 +185,25 @@ const Attendance = () => {
       <Table month={a} year={b} />
       <Table month={c} year={d} />
       <Table month={e} year={f} />
-      <div className="h-40"></div>
+      <div className="mx-14">
+        <h1 className="text-3xl font-bold mb-3">Tra cứu lịch sử ra vào</h1>
+        <input
+          className="mb-3"
+          type="date"
+          name=""
+          id=""
+          onChange={(e) => {
+            setDate(
+              `${e.target.value.slice(8, 10)}/${e.target.value.slice(
+                5,
+                7
+              )}/${e.target.value.slice(0, 4)}`
+            );
+          }}
+        />
+        {date && <InOutTable date={date} employees={employees} />}
+        <div className="h-40"></div>
+      </div>
     </div>
   );
 };
