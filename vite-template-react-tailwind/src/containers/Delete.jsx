@@ -14,11 +14,51 @@ import { db } from "../firebase";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
+const ConfirmModal = ({ setConfirm, deleteEmployee }) => {
+  return (
+    <div className="w-full h-full absolute top-0 left-0 bg-black bg-opacity-25">
+      <div className="bg-white rounded-3xl w-2/6 h-[140px] absolute left-1/2 top-1/2 -translate-y-1/2  -translate-x-1/2 overflow-hidden">
+        <div className="relative top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full p-6 overflow-x-hidden">
+          <div className="flex justify-center flex-col items-center">
+            <div className="font-bold text-lg">
+              Do you really want to delete this employee?
+            </div>
+            <div className="flex gap-20 mt-4">
+              <button
+                className="border px-10 py-2 font-bold bg-green-500"
+                onClick={() => {
+                  setConfirm(false);
+                  toast.promise(deleteEmployee, {
+                    loading: "Loading",
+                    success: "Delete success",
+                    error: "Error when fetching",
+                  });
+                }}
+              >
+                Yes
+              </button>
+              <button
+                className="border px-10 py-2 font-bold bg-red-500"
+                onClick={() => {
+                  setConfirm(false);
+                }}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Delete = () => {
   const [employees, setEmployees] = useState([]);
   const [selected, setSelected] = useState(false);
   const [deleteInfo, setDeleteInfo] = useState({});
   const [deleteId, setDeleteId] = useState("");
+  const [confirm, setConfirm] = useState(false);
 
   const fetchData = async () => {
     const employeeData = (
@@ -69,10 +109,12 @@ const Delete = () => {
       keys.push(key);
     }
   });
-  console.log(keys);
 
   return (
-    <div className="pt-12 pl-12">
+    <div className="pb-8 w-full min-h-screen px-12 absolute top-0 pt-24">
+      {confirm && (
+        <ConfirmModal setConfirm={setConfirm} deleteEmployee={deleteEmployee} />
+      )}
       <h1 className="text-3xl font-bold mb-3">Delete</h1>
       <label for="id" className="font-bold">
         Choose employee to delete:{" "}
@@ -118,11 +160,7 @@ const Delete = () => {
           <button
             className="border border-black mt-2 px-1 hover:bg-red-500"
             onClick={() => {
-              toast.promise(deleteEmployee, {
-                loading: "Loading",
-                success: "Delete success",
-                error: "Error when fetching",
-              });
+              setConfirm(true);
             }}
           >
             Delete

@@ -132,7 +132,7 @@ const Table = ({ employees, month, year, setModal, setModalContent }) => {
 
     excelRow.workedDay = workedDay;
     excelRow.notWorkedDay = days - workedDay;
-    excelRow.workedHours = workedHours;
+    excelRow.workedHours = Math.floor(workedHours / 3600);
     excelRow.salary = totalMoney;
     excelData.push(excelRow);
 
@@ -149,7 +149,6 @@ const Table = ({ employees, month, year, setModal, setModalContent }) => {
       </>
     );
   }
-  console.log(excelData);
   return (
     <div className="grid grid-cols-12 pb-8">
       <div className="col-span-7">
@@ -159,12 +158,12 @@ const Table = ({ employees, month, year, setModal, setModalContent }) => {
             data={excelData}
             filename={`bangchamcong_${month}-${year}`}
             className="bg-green-600 ml-4 text-white px-2 py-1 rounded font-bold text-base hover:bg-green-700"
-            // className="bg-green-600 mb-3 opacity-80 text-white px-4 py-2 rounded font-bold -z-10 hover:opacity-100 w-full h-full"
           >
             <i class="fa-solid fa-file-arrow-down mr-2"></i>
             Export
           </CSVLink>
         </h1>
+
         {/* <button className="bg-green-600 mb-3 text-white px-4 py-2 rounded font-bold hover:bg-green-700"> */}
         {/* </button> */}
         <table>
@@ -198,12 +197,15 @@ const Table = ({ employees, month, year, setModal, setModalContent }) => {
             })}
           </tbody>
         </table>
-      </div>
-      <div className="col-span-5 inline-block pl-2 pt-10">
-        <BarChart data={employeeData} label={employeeLabel} />
         <h1 className="pt-3">
           Tổng tiền lương phải trả nhân viên tháng này:{" "}
           {moneyNeedToPayForEmp.toLocaleString()} VND
+        </h1>
+      </div>
+      <div className="col-span-5 pl-2 pt-10 flex flex-col items-center">
+        <BarChart data={employeeData} label={employeeLabel} />
+        <h1 className="pt-3">
+          Biểu đồ giờ làm nhân viên tháng {month}/{year}
         </h1>
       </div>
     </div>
